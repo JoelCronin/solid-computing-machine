@@ -51,21 +51,44 @@ app.post('/api/notes', (req, res) => {
       }
     });
 
-    res.json("Process Complete")
-
   } else {
     res.error('Error in posting note');
   }
 });
 
 app.delete("/api/notes/:id", (req, res) => {
+
+
    const requestedID = req.params.id;
 
-   for( let i = 0; i < jsonData.length; i++){
-    if (requestedID === jsonData[i].id) {
+   fs.readFile("./db/db.json", "utf8", (err, data) =>{
+    if (err){
+      console.error(err)
+    } else {
+      const parseDelete = JSON.parse(data);
+      for( let i = 0; i < parseDelete.length; i++){
+        if (requestedID === parseDelete[i].id) {
+          // remainingArr = jsonData.filter(data => data.id != requestedID)
+         jsonData.splice(i, 1)
+          // console.log(remainingArr)
+    
+          fs.writeFile(
+            './db/db.json',
+            JSON.stringify(jsonData, null, 4),
+            (writeErr) =>
+             writeErr
+              ? console.error(writeErr)
+              : console.info("Deleted")
+          );
+        } else {
+          console.log('Cant delete')
+        }
+    
+       }}
+   })
+   res.end()
 
-    }
-   }
+   
 })
 
 app.get('*', (req, res) =>
