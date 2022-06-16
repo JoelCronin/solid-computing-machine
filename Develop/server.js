@@ -29,7 +29,7 @@ app.post('/api/notes', (req, res) => {
     const newNote = {
       title,
       text,
-      note_id: uuid(),
+      id: uuid(),
     };
 
     fs.readFile('./db/db.json', "utf8", (err, data) => {
@@ -53,11 +53,20 @@ app.post('/api/notes', (req, res) => {
 
     res.json("Process Complete")
 
-
   } else {
     res.error('Error in posting note');
   }
 });
+
+app.delete("/api/notes/:id", (req, res) => {
+   const requestedID = req.params.id;
+
+   for( let i = 0; i < jsonData.length; i++){
+    if (requestedID === jsonData[i].id) {
+
+    }
+   }
+})
 
 app.get('*', (req, res) =>
   res.sendFile(path.join(__dirname, 'public/index.html'))
