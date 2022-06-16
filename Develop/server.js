@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
 const jsonData = require('./db/db.json')
-
+const fs = require('fs');
+const uuid = require("./helpers/uuid")
 const app = express();
 const PORT = 3001;
 
@@ -15,23 +16,52 @@ app.get('/notes', (req, res) =>
   res.sendFile(path.join(__dirname, 'public/notes.html'))
 );
 
-app.get('/api/notes', (req, res) => res.json(jsonData));
+app.get('/api/notes', (req, res) => 
+res.sendFile(path.join(__dirname, '/db/db.json')));
 
 app.post('/api/notes', (req, res) => {
   // Let the client know that their POST request was received
   res.json(`${req.method} request received`);
 
-  // Show the user agent information in the terminal
-  console.info(req.rawHeaders);
+  const { title, text } = req.body;
 
-  // Log our request to the terminal
-  console.info(`${req.method} request received`);
+  if (title && text){
+    const newNote = {
+      title,
+      text,
+      note_id: uuid(),
+    };
+
+    fs.readFile('./db/db.json', "utf8", (err, data) => {
+      if(err) {
+        console.error(err);
+      } else {
+        const parsedNote = JSON.parse(data);
+
+        parsedNote.push(newNote);
+
+        fs.writeFile(
+          './db/db.json',
+          JSON.stringify(parsedNote, null, 4),
+          (writeErr) =>
+           writeErr
+            ? console.error(writeErr)
+            : console.info("Note added successfully")
+        );
+      }
+    });
+
+    res.json("Process Complete")
+
+
+  } else {
+    res.error('Error in posting note');
+  }
 });
 
 app.get('*', (req, res) =>
   res.sendFile(path.join(__dirname, 'public/index.html'))
 );
-
 
 app.listen(PORT, () =>
   console.log(`Example apple listening at http://localhost:${PORT}`)
