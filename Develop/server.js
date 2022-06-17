@@ -69,12 +69,12 @@ app.delete("/api/notes/:id", (req, res) => {
       for( let i = 0; i < parseDelete.length; i++){
         if (requestedID === parseDelete[i].id) {
           // remainingArr = jsonData.filter(data => data.id != requestedID)
-         jsonData.splice(i, 1)
+         parseDelete.splice(i, 1)
           // console.log(remainingArr)
     
           fs.writeFile(
             './db/db.json',
-            JSON.stringify(jsonData, null, 4),
+            JSON.stringify(parseDelete, null, 4),
             (writeErr) =>
              writeErr
               ? console.error(writeErr)
