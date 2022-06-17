@@ -1,8 +1,8 @@
 const express = require('express');
 const path = require('path');
-const jsonData = require('./db/db.json')
+const jsonData = require('./Develop/db/db.json')
 const fs = require('fs');
-const uuid = require("./helpers/uuid")
+const uuid = require("./Develop/helpers/uuid")
 const app = express();
 const PORT = 3001;
 
